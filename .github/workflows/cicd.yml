@@ -22,3 +22,13 @@ jobs:
         run: docker build -t rajeshjallu/springboot-example .
       - name: Publish image to docker hub
         run: docker push rajeshjallu/springboot-example:latest
+  deploy:
+    needs: build
+    runs-on: [aws-ec2]
+    steps:
+      - name: Pull Image from docker hub
+        run: docker pull rajeshjallu/springboot-example:latest
+      - name: Delete old container
+        run: docker rm -f rajeshjallu/springboot-example-con | true
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 --name springboot-example-con rajeshjallu/springboot-example
